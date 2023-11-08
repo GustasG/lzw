@@ -34,6 +34,10 @@ fn compress_stream<R: Read, W: Write, E: Endianness>(
             word.pop();
             writer.write(max_code_size as u32, table[&word])?;
 
+            if table.len() == max_entries && max_entries > 256 {
+                table = (0..256).map(|i| (vec![i as u8], i as u16)).collect();
+            }
+
             if table.len() < max_entries {
                 word.push(byte);
                 table.insert(std::mem::take(&mut word), table.len() as u16);

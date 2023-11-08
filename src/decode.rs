@@ -10,7 +10,6 @@ fn decompress_stream<R: Read, W: Write, E: Endianness>(
     writer: &mut W,
 ) -> Result<(), std::io::Error> {
     let max_code_size = reader.read::<u8>(4)?;
-    let max_entries = 2_usize.pow(max_code_size as u32);
 
     if max_code_size < 8 || max_code_size > 16 {
         return Err(std::io::Error::new(
@@ -19,6 +18,7 @@ fn decompress_stream<R: Read, W: Write, E: Endianness>(
         ));
     }
 
+    let max_entries = 2_usize.pow(max_code_size as u32);
     let mut table: HashMap<u16, Vec<u8>> = (0..256).map(|i| (i as u16, vec![i as u8])).collect();
 
     let mut prev_code = match reader.read::<u16>(max_code_size as u32) {
@@ -38,28 +38,30 @@ fn decompress_stream<R: Read, W: Write, E: Endianness>(
                 _ => return Err(e),
             },
             Ok(code) => {
-                match table.get(&code) {
+                let new_entry = match table.get(&code) {
                     Some(entry) => {
                         writer.write(&entry)?;
 
-                        if table.len() < max_entries {
-                            let mut prev = table[&prev_code].clone();
-                            prev.push(entry[0]);
-                            table.insert(table.len() as u16, prev);
-                        }
+                        let mut prev = table[&prev_code].clone();
+                        prev.push(entry[0]);
+                        prev
                     }
                     None => {
-                        let v = &table[&prev_code];
+                        let mut v = table[&prev_code].clone();
+                        v.push(v[0]);
 
-                        writer.write(v)?;
-                        writer.write(&[v[0]])?;
+                        writer.write(&v)?;
 
-                        if table.len() < max_entries {
-                            let mut v = v.clone();
-                            v.push(v[0]);
-                            table.insert(table.len() as u16, v);
-                        }
+                        v
                     }
+                };
+
+                if table.len() == max_entries && max_entries > 256 {
+                    table = (0..256).map(|i| (i as u16, vec![i as u8])).collect();
+                }
+
+                if table.len() < max_entries {
+                    table.insert(table.len() as u16, new_entry);
                 }
 
                 prev_code = code;

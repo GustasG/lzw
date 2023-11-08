@@ -1,7 +1,11 @@
 [package]
 name = "lzw"
 version = "0.1.0"
+authors = ["Gustas Gedminas"]
+repository = "https://github.com/GustasG/lzw"
+license = "MIT"
 edition = "2021"
 
 [dependencies]
 bitstream-io = "1.8.0"
+clap = { version = "4.4.7", features = ["derive", "color", "suggestions"] }
