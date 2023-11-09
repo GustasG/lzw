@@ -11,7 +11,7 @@ fn decompress_stream<R: Read, W: Write, E: Endianness>(
 ) -> Result<(), std::io::Error> {
     let max_code_size = reader.read::<u8>(8)?;
 
-    if max_code_size < 8 || max_code_size > 16 {
+    if !(8..16).contains(&max_code_size) {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
             "invalid max_code_size",
@@ -40,7 +40,7 @@ fn decompress_stream<R: Read, W: Write, E: Endianness>(
             Ok(code) => {
                 let new_entry = match table.get(&code) {
                     Some(entry) => {
-                        writer.write_all(&entry)?;
+                        writer.write_all(entry)?;
 
                         let mut prev = table[&prev_code].clone();
                         prev.push(entry[0]);

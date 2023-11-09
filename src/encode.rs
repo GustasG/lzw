@@ -10,7 +10,7 @@ fn compress_stream<R: Read, W: Write, E: Endianness>(
     writer: &mut BitWriter<W, E>,
     max_code_size: u8,
 ) -> Result<(), std::io::Error> {
-    if max_code_size < 8 || max_code_size > 16 {
+    if !(8..16).contains(&max_code_size) {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidInput,
             format!(
