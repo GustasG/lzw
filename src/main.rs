@@ -24,7 +24,11 @@ fn run_compression(input_path: &Path, output_path: &Path, max_code_size: u8) {
         println!("Compression finished");
         println!("Input file size: {} bytes", input_size);
         println!("Output file size: {} bytes", output_size);
-        println!("Compression ratio: {:.3} ({:.2} %)", compression_ratio, compression_ratio * 100.0);
+        println!(
+            "Compression ratio: {:.3} ({:.2} %)",
+            compression_ratio,
+            compression_ratio * 100.0
+        );
         println!("Elapsed: {:.3} (s)", duration.as_secs_f32());
     }
 }
@@ -53,7 +57,7 @@ fn main() {
     match args.mode {
         Mode::Compress => {
             run_compression(&args.input_file, &args.output_file, args.max_code_size);
-        },
+        }
         Mode::Decompress => {
             run_decompression(&args.input_file, &args.output_file);
         }

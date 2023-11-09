@@ -10,11 +10,11 @@ fn compress_stream<R: Read, W: Write, E: Endianness>(
     writer: &mut BitWriter<W, E>,
     max_code_size: u8,
 ) -> Result<(), std::io::Error> {
-    if max_code_size < 8 || max_code_size > 15 {
+    if max_code_size < 8 || max_code_size > 16 {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidInput,
             format!(
-                "max_code_size must be between 8 and 15, got {}",
+                "max_code_size must be between 8 and 16, got {}",
                 max_code_size
             ),
         ));
@@ -24,7 +24,7 @@ fn compress_stream<R: Read, W: Write, E: Endianness>(
     let mut table: HashMap<Vec<u8>, u16> = (0..256).map(|i| (vec![i as u8], i as u16)).collect();
     let mut word = Vec::new();
 
-    writer.write(4, max_code_size)?;
+    writer.write(8, max_code_size)?;
 
     for byte in reader.bytes() {
         let byte = byte?;

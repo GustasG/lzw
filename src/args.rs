@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 
-use clap::{Parser, ValueHint, ValueEnum};
+use clap::{Parser, ValueEnum, ValueHint};
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, ValueEnum)]
 pub enum Mode {
     Compress,
-    Decompress
+    Decompress,
 }
 
 #[derive(Parser, Debug)]
@@ -21,5 +21,5 @@ pub struct Arguments {
     pub mode: Mode,
 
     #[arg(long, default_value = "12")]
-    pub max_code_size: u8
+    pub max_code_size: u8,
 }

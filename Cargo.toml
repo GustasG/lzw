@@ -3,6 +3,7 @@ name = "lzw"
 version = "0.1.0"
 authors = ["Gustas Gedminas"]
 repository = "https://github.com/GustasG/lzw"
+description = "LZW compression algorithm implementation"
 license = "MIT"
 edition = "2021"
 
