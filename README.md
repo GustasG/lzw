@@ -1,3 +1,3 @@
 # lzw
 
-LZW compression algorithm implemented with rust
+LZW file compression algorithm implementation

@@ -21,5 +21,5 @@ pub struct Arguments {
     pub mode: Mode,
 
     #[arg(long, default_value = "12")]
-    pub max_code_size: u8,
+    pub length: u8,
 }

@@ -4,3 +4,6 @@ target/
 
 # big directories
 data/
+
+# Visual Studio Code
+.vscode/

@@ -1,18 +1,17 @@
-use std::{path::Path, time::Instant};
+use std::path::Path;
+use std::time::Instant;
 
 mod args;
-mod decode;
-mod encode;
+mod lzw;
 
 use args::{Arguments, Mode};
 use clap::Parser;
-use decode::decompress;
-use encode::compress;
+use lzw::{compress_file, decompress_file};
 
-fn run_compression(input_path: &Path, output_path: &Path, max_code_size: u8) {
+fn run_compression(input_path: &Path, output_path: &Path, length: u8) {
     let now = Instant::now();
 
-    if let Err(e) = compress(input_path, output_path, max_code_size) {
+    if let Err(e) = compress_file(input_path, output_path, length) {
         eprintln!("Error failed to compress: {}", e);
     } else {
         let input_size = input_path.metadata().unwrap().len();
@@ -36,7 +35,7 @@ fn run_compression(input_path: &Path, output_path: &Path, max_code_size: u8) {
 fn run_decompression(input_path: &Path, output_path: &Path) {
     let now = Instant::now();
 
-    if let Err(e) = decompress(input_path, output_path) {
+    if let Err(e) = decompress_file(input_path, output_path) {
         eprintln!("Error failed to decompress: {}", e);
     } else {
         let input_size = input_path.metadata().unwrap().len();
@@ -55,11 +54,7 @@ fn main() {
     let args = Arguments::parse();
 
     match args.mode {
-        Mode::Compress => {
-            run_compression(&args.input_file, &args.output_file, args.max_code_size);
-        }
-        Mode::Decompress => {
-            run_decompression(&args.input_file, &args.output_file);
-        }
+        Mode::Compress => run_compression(&args.input_file, &args.output_file, args.length),
+        Mode::Decompress => run_decompression(&args.input_file, &args.output_file),
     }
 }
