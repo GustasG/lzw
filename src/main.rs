@@ -2,16 +2,18 @@ use std::path::Path;
 use std::time::Instant;
 
 mod args;
-mod lzw;
+mod decode;
+mod encode;
 
 use args::{Arguments, Mode};
 use clap::Parser;
-use lzw::{compress_file, decompress_file};
+use decode::decompress_file;
+use encode::compress_file;
 
-fn run_compression(input_path: &Path, output_path: &Path, length: u8) {
+fn run_compression(input_path: &Path, output_path: &Path, length: u8, fixed: bool) {
     let now = Instant::now();
 
-    if let Err(e) = compress_file(input_path, output_path, length) {
+    if let Err(e) = compress_file(input_path, output_path, length, fixed) {
         eprintln!("Error failed to compress: {}", e);
     } else {
         let input_size = input_path.metadata().unwrap().len();
@@ -54,7 +56,9 @@ fn main() {
     let args = Arguments::parse();
 
     match args.mode {
-        Mode::Compress => run_compression(&args.input_file, &args.output_file, args.length),
+        Mode::Compress => {
+            run_compression(&args.input_file, &args.output_file, args.size, args.fixed)
+        }
         Mode::Decompress => run_decompression(&args.input_file, &args.output_file),
     }
 }

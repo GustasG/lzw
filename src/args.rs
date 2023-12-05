@@ -21,5 +21,8 @@ pub struct Arguments {
     pub mode: Mode,
 
     #[arg(long, default_value = "12")]
-    pub length: u8,
+    pub size: u8,
+
+    #[arg(long)]
+    pub fixed: bool,
 }
